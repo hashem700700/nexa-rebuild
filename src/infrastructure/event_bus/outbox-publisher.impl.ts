@@ -13,20 +13,20 @@ export class OutboxPublisherImpl {
       item_id: dto.item_id,
       quantity: dto.quantity,
       movement_type: dto.movement_type
-    }).replace(/'/g, "''"); // escape single quotes for SQL
+    });
 
-    await tx.$executeRawUnsafe(`
+    await tx.$executeRaw`
       INSERT INTO outbox_events (tenant_id, correlation_id, idempotency_key, aggregate_type, aggregate_id, event_type, payload, status)
       VALUES (
-        '${dto.contextBundle.tenant_id}',
-        '${dto.contextBundle.correlation_id}',
-        '${idempotencyKey}',
+        ${dto.contextBundle.tenant_id}::uuid,
+        ${dto.contextBundle.correlation_id}::uuid,
+        ${idempotencyKey},
         'WarehouseStock',
-        '${dto.warehouse_id}',
+        ${dto.warehouse_id},
         'StockMovementRecorded',
-        '${payloadStr}'::jsonb,
+        ${payloadStr}::jsonb,
         'pending'
       )
-    `);
+    `;
   }
 }

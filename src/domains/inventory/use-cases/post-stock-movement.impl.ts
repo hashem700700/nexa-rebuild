@@ -22,19 +22,19 @@ export class PostStockMovementUseCase {
 
     return this.uow.execute(dto.contextBundle.tenant_id, async (tx) => {
       // 1. Insert Stock Movement
-      await tx.$executeRawUnsafe(`
+      await tx.$executeRaw`
         INSERT INTO stock_movements (tenant_id, warehouse_id, item_id, quantity, movement_type, reference_document, correlation_id, status)
         VALUES (
-          '${dto.contextBundle.tenant_id}',
-          '${dto.warehouse_id}',
-          '${dto.item_id}',
+          ${dto.contextBundle.tenant_id}::uuid,
+          ${dto.warehouse_id},
+          ${dto.item_id},
           ${dto.quantity},
-          '${dto.movement_type}',
-          ${dto.reference_document ? `'${dto.reference_document}'` : 'NULL'},
-          '${dto.contextBundle.correlation_id}',
+          ${dto.movement_type},
+          ${dto.reference_document || null},
+          ${dto.contextBundle.correlation_id}::uuid,
           'completed'
         )
-      `);
+      `;
 
       // 2. Accounting Kernel
       const journalPoster = new JournalPosterImpl();

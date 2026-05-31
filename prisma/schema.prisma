@@ -5,3 +5,83 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model system_tenants {
+  tenant_id    String @id @db.Uuid
+  company_name String @db.VarChar(255)
+  status       String @db.VarChar(50)
+}
+
+model chart_of_accounts {
+  account_id   String @id @db.VarChar(255)
+  tenant_id    String @db.Uuid
+  account_name String @db.VarChar(255)
+  account_type String @db.VarChar(50)
+}
+
+model warehouses {
+  warehouse_id   String @id @db.VarChar(255)
+  tenant_id      String @db.Uuid
+  warehouse_name String @db.VarChar(255)
+}
+
+model item_master {
+  item_id   String @id @db.VarChar(255)
+  tenant_id String @db.Uuid
+  item_name String @db.VarChar(255)
+}
+
+model stock_movements {
+  movement_id        Int     @id @default(autoincrement())
+  tenant_id          String  @db.Uuid
+  warehouse_id       String  @db.VarChar(255)
+  item_id            String  @db.VarChar(255)
+  quantity           Decimal @db.Decimal
+  movement_type      String  @db.VarChar(50)
+  reference_document String? @db.VarChar(255)
+  correlation_id     String  @db.Uuid
+  status             String  @db.VarChar(50)
+}
+
+model journal_entries {
+  journal_id     String   @id @db.VarChar(255)
+  tenant_id      String   @db.Uuid
+  correlation_id String   @db.Uuid
+  journal_date   DateTime @db.Date
+  description    String?  @db.Text
+  status         String   @db.VarChar(50)
+}
+
+model journal_lines {
+  line_id              Int     @id @default(autoincrement())
+  tenant_id            String  @db.Uuid
+  journal_id           String  @db.VarChar(255)
+  account_id           String  @db.VarChar(255)
+  debit_amount         Decimal @db.Decimal
+  credit_amount        Decimal @db.Decimal
+  transaction_currency String  @db.VarChar(10)
+  exchange_rate        Decimal @db.Decimal
+  base_debit_amount    Decimal @db.Decimal
+  base_credit_amount   Decimal @db.Decimal
+}
+
+model outbox_events {
+  event_id        Int    @id @default(autoincrement())
+  tenant_id       String @db.Uuid
+  correlation_id  String @db.Uuid
+  idempotency_key String @unique @db.VarChar(255)
+  aggregate_type  String @db.VarChar(255)
+  aggregate_id    String @db.VarChar(255)
+  event_type      String @db.VarChar(255)
+  payload         Json   @db.JsonB
+  status          String @db.VarChar(50)
+}
+
+model projection_inventory_stock {
+  tenant_id        String  @db.Uuid
+  warehouse_id     String  @db.VarChar(255)
+  item_id          String  @db.VarChar(255)
+  quantity_on_hand Decimal @db.Decimal
+
+  @@unique([tenant_id, warehouse_id, item_id])
+}

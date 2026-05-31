@@ -13,9 +13,7 @@ export class UnitOfWork {
       // =========================
       // INV: TENANT CONTEXT BINDING
       // =========================
-      await tx.$executeRawUnsafe(
-        `SELECT set_config('app.current_tenant_id', '${tenantId}', true)`
-      );
+      await tx.$executeRaw`SELECT set_config('app.current_tenant_id', ${tenantId}, true)`;
 
       // =========================
       // CRITICAL RULE:
