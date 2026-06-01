@@ -19,6 +19,9 @@
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
+    "@neondatabase/serverless": "^1.1.0",
+    "@prisma/adapter-neon": "^7.8.0",
+    "@prisma/adapter-pg": "^7.8.0",
     "@tailwindcss/vite": "^4.1.14",
     "@vitejs/plugin-react": "^5.0.4",
     "body-parser": "^2.2.2",
@@ -31,6 +34,7 @@
     "react-dom": "^19.0.1",
     "ts-node": "^10.9.2",
     "vite": "^6.2.3",
+    "ws": "^8.21.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {

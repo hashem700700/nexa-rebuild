@@ -50,6 +50,8 @@ model journal_entries {
   journal_date   DateTime @db.Date
   description    String?  @db.Text
   status         String   @db.VarChar(50)
+  valid_from     DateTime @default(now()) @db.Timestamptz
+  valid_to       DateTime @default(dbgenerated("'9999-12-31 23:59:59+00'::timestamp with time zone")) @db.Timestamptz
 }
 
 model journal_lines {
@@ -84,4 +86,53 @@ model projection_inventory_stock {
   quantity_on_hand Decimal @db.Decimal
 
   @@unique([tenant_id, warehouse_id, item_id])
+}
+
+// ==========================================
+// AUTHORIZATION KERNEL (RBAC/ABAC/SoD)
+// ==========================================
+
+model auth_roles {
+  role_id     String @id @db.VarChar(255)
+  tenant_id   String @db.Uuid
+  role_name   String @db.VarChar(255)
+  description String? @db.Text
+  
+  @@unique([tenant_id, role_name])
+}
+
+model auth_role_permissions {
+  tenant_id   String @db.Uuid
+  role_id     String @db.VarChar(255)
+  resource    String @db.VarChar(255)
+  action      String @db.VarChar(50)
+  
+  @@id([tenant_id, role_id, resource, action])
+}
+
+model auth_user_roles {
+  tenant_id   String @db.Uuid
+  user_id     String @db.VarChar(255)
+  role_id     String @db.VarChar(255)
+
+  @@id([tenant_id, user_id, role_id])
+}
+
+model auth_sod_conflicts {
+  tenant_id       String @db.Uuid
+  conflict_id     String @id @db.VarChar(255)
+  role_a          String @db.VarChar(255)
+  role_b          String @db.VarChar(255)
+  description     String? @db.Text
+}
+
+model auth_audit_log {
+  audit_id      String @id @db.Uuid // UUID instead of autoincrement for security tracing
+  tenant_id     String @db.Uuid
+  user_id       String @db.VarChar(255)
+  resource      String @db.VarChar(255)
+  action        String @db.VarChar(50)
+  decision      String @db.VarChar(50) // e.g. "PERMIT", "DENY"
+  decision_hash String @db.VarChar(255)
+  timestamp     DateTime @default(now()) @db.Timestamptz
 }

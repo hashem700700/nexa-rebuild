@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import { getPrisma } from '../../lib/prisma';
 
-const prisma = new PrismaClient();
+const prisma = getPrisma();
 
 async function runTests() {
   const TENANT_ID = '00000000-0000-0000-0000-000000000001';
