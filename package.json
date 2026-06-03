@@ -10,11 +10,12 @@
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
-    "prepare": "husky || true"
+    "prepare": "husky || true",
+    "postinstall": "prisma generate"
   },
   "lint-staged": {
     "src/domains/**/*.ts": [
-      "node scripts/check-domain-boundaries.js"
+      "node scripts/check-domain-boundaries.cjs"
     ]
   },
   "dependencies": {
