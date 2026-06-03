@@ -13,7 +13,7 @@ export class OutboxRelay {
 
     for (const event of events) {
       try {
-        // Here we would delegate to actual subscribers using an event router.
+        // TODO: [STUB] Implement real message broker publishing.
         // For demonstration of the relay pattern, we just mark it as processed.
         console.log(`Processing event ${event.event_id} of type ${event.event_type}...`);
         
