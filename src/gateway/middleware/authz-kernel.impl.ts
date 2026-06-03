@@ -69,8 +69,8 @@ export class AuthzKernel {
   private async checkRbac(tenantId: string, roleIds: string[], resource: string, action: string): Promise<boolean> {
     if (!roleIds.length) return false;
 
-    // 2. Check if any role has the exact permission or a wildcard
-    const permission = await this.prisma.auth_role_permissions.findFirst({
+    // Check all applicable permissions for this resource and action
+    const permissions = await this.prisma.auth_role_permissions.findMany({
       where: {
         tenant_id: tenantId,
         role_id: { in: roleIds },
@@ -79,7 +79,16 @@ export class AuthzKernel {
       }
     });
 
-    return !!permission;
+    if (permissions.length === 0) return false;
+
+    // Explicit DENY overrides any PERMIT
+    const hasDeny = permissions.some(p => p.effect === 'DENY');
+    if (hasDeny) {
+      return false;
+    }
+
+    // Otherwise if we have at least one PERMIT, it's allowed
+    return permissions.some(p => p.effect === 'PERMIT');
   }
 
   private async logDecision(tenantId: string, userId: string, resource: string, action: string, isPermitted: boolean, reason: string = 'UNKNOWN') {
