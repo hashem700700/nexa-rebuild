@@ -106,6 +106,7 @@ model auth_role_permissions {
   role_id     String @db.VarChar(255)
   resource    String @db.VarChar(255)
   action      String @db.VarChar(50)
+  effect      String @db.VarChar(10) @default("PERMIT")
   
   @@id([tenant_id, role_id, resource, action])
 }

@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 
 // Define the transaction context type from Prisma
-type PrismaTransaction = Parameters<Parameters<PrismaClient['$transaction']>[0]>[0];
+export type PrismaTransaction = Parameters<Parameters<PrismaClient['$transaction']>[0]>[0];
 
 /**
  * Executes a Unit of Work (callback) within a single transaction that has the 
@@ -25,5 +25,9 @@ export async function runWithTenantContext<T>(
     
     // Execute all domain/data operations securely within the established tenant context
     return await work(tx);
+  }, {
+    isolationLevel: 'Serializable', // INV-DB-ENTRY STRONGEST GUARANTEE
+    maxWait: 5000,
+    timeout: 30000
   });
 }
