@@ -4,7 +4,7 @@ import stockMovementRouter from './gateway/routes/stock-movement.route';
 import { ContractError } from './gateway/error_handler/contract-error';
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
 // 1. Global Middleware Chain (Strict Order)
 app.use(bodyParser.json());
