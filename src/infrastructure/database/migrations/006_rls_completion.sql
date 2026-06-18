@@ -14,13 +14,21 @@ ALTER TABLE item_master FORCE ROW LEVEL SECURITY;
 
 -- Create Policies
 CREATE POLICY tenant_isolation_policy ON system_tenants
-    USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
+    FOR ALL
+    USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid)
+    WITH CHECK (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
 
 CREATE POLICY tenant_isolation_policy ON chart_of_accounts
-    USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
+    FOR ALL
+    USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid)
+    WITH CHECK (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
 
 CREATE POLICY tenant_isolation_policy ON warehouses
-    USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
+    FOR ALL
+    USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid)
+    WITH CHECK (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
 
 CREATE POLICY tenant_isolation_policy ON item_master
-    USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
+    FOR ALL
+    USING (tenant_id = current_setting('app.current_tenant_id', true)::uuid)
+    WITH CHECK (tenant_id = current_setting('app.current_tenant_id', true)::uuid);
